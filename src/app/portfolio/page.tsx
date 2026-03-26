@@ -3,14 +3,22 @@ import Footer from '@/components/public/Footer'
 import PortfolioClient from './PortfolioClient'
 import { getAllActiveProjects, getProjectCategories, getProjectYears } from '@/lib/queries'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function PortfolioPage() {
-  const [projects, categories, years] = await Promise.all([
-    getAllActiveProjects(),
-    getProjectCategories(),
-    getProjectYears(),
-  ])
+  let projects = []
+  let categories: string[] = []
+  let years: number[] = []
+
+  try {
+    ;[projects, categories, years] = await Promise.all([
+      getAllActiveProjects(),
+      getProjectCategories(),
+      getProjectYears(),
+    ])
+  } catch (e) {
+    console.error('Portfolio fetch error:', e)
+  }
 
   return (
     <>
